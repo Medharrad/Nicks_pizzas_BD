@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Zaynab! 🎂</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <!-- Story overlay -->
+    <div id="story-overlay" class="overlay active">
+        <div id="story-text" class="story-text"></div>
+    </div>
+
+    <!-- Microphone permission overlay -->
+    <div id="mic-overlay" class="overlay">
+        <div class="mic-prompt">
+            <h2>🎤 شبه جاهز!</h2>
+            <p>نحتاج للوصول إلى الميكروفون لتتمكن من إطفاء الشموع</p>
+            <button id="enable-mic">تفعيل الميكروفون</button>
+            <p class="skip-text">أو <a href="#" id="skip-mic">تخطي هذه الخطوة</a></p>
+        </div>
+    </div>
+
+    <!-- Blow instruction overlay -->
+    <div id="blow-instruction" class="instruction hidden">
+        <p>🎤 انفخ في الميكروفون لإطفاء الشموع!</p>
+        <div id="blow-meter" class="blow-meter">
+            <div id="blow-level" class="blow-level"></div>
+        </div>
+    </div>
+
+    <!-- Blow button fallback -->
+    <div id="blow-button-container" class="blow-button-container hidden">
+        <button id="blow-button" class="blow-button">💨 انفخ الشموع</button>
+    </div>
+
+    <!-- Music controls -->
+    <div id="music-controls" class="music-controls hidden">
+        <button id="stop-music" class="control-button">⏹️ إيقاف الموسيقى</button>
+    </div>
+
+    <!-- Celebration message -->
+    <div id="celebration-message" class="celebration-message hidden">
+        <h1>اطلبي أمنية يا زينب! ✨</h1>
+    </div>
+
+    <!-- Repeat button -->
+    <div id="repeat-button-container" class="repeat-button-container hidden">
+        <button id="repeat-experience" class="repeat-button">🔄 إعادة التجربة</button>
+    </div>
+
+    <!-- Three.js canvas will be inserted here -->
+    <script type="module" src="/main.js"></script>
+</body>
+</html>

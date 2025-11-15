@@ -1,0 +1,364 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Cairo', 'Tajawal', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100vh;
+}
+
+/* Overlays */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Story text */
+.story-text {
+    font-size: 2.5rem;
+    color: #fff;
+    text-align: center;
+    padding: 2rem;
+    max-width: 800px;
+    line-height: 1.6;
+    opacity: 0;
+}
+
+.story-text.fade-in {
+    animation: fadeIn 1s ease forwards;
+}
+
+.story-text.fade-out {
+    animation: fadeOut 1s ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+/* Microphone prompt */
+.mic-prompt {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+}
+
+.mic-prompt h2 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.mic-prompt p {
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.mic-prompt button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.mic-prompt button:hover {
+    transform: scale(1.05);
+}
+
+.skip-text {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.skip-text a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+/* Blow instruction */
+.instruction {
+    position: fixed;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    text-align: center;
+    transition: opacity 0.3s ease;
+}
+
+.instruction.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.instruction p {
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+/* Blow meter */
+.blow-meter {
+    width: 200px;
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.blow-level {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    transition: width 0.1s ease;
+    border-radius: 10px;
+}
+
+/* Celebration message */
+.celebration-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 200;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+}
+
+.celebration-message.show {
+    opacity: 1;
+}
+
+.celebration-message h1 {
+    font-size: 4rem;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+                 0 0 40px rgba(255, 182, 193, 0.8);
+    animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Blow button fallback */
+.blow-button-container {
+    position: fixed;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.blow-button-container:not(.hidden) {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.blow-button {
+    background: linear-gradient(135deg, #00bfff 0%, #1e90ff 100%);
+    color: white;
+    border: none;
+    padding: 1.5rem 3rem;
+    font-size: 1.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.blow-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 35px rgba(0, 191, 255, 0.5);
+}
+
+.blow-button:active {
+    transform: scale(0.95);
+}
+
+/* Music controls */
+.music-controls {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.music-controls:not(.hidden) {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.control-button {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: 2px solid white;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.control-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Repeat button */
+.repeat-button-container {
+    position: fixed;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.repeat-button-container:not(.hidden) {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.repeat-button {
+    background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
+    color: white;
+    border: none;
+    padding: 1.2rem 2.5rem;
+    font-size: 1.3rem;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px 25px rgba(255, 20, 147, 0.4);
+    transition: all 0.3s ease;
+}
+
+.repeat-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 35px rgba(255, 20, 147, 0.6);
+}
+
+.repeat-button:active {
+    transform: scale(0.95);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .story-text {
+        font-size: 1.8rem;
+        padding: 1rem;
+    }
+
+    .mic-prompt {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .celebration-message h1 {
+        font-size: 2.5rem;
+    }
+
+    .instruction {
+        top: 1rem;
+        padding: 1rem;
+    }
+
+    .instruction p {
+        font-size: 0.9rem;
+    }
+
+    .blow-button-container {
+        bottom: 2rem;
+        width: 90%;
+        max-width: 300px;
+    }
+
+    .blow-button {
+        width: 100%;
+        padding: 1.2rem 2rem;
+        font-size: 1.2rem;
+    }
+
+    .repeat-button-container {
+        bottom: 2rem;
+        width: 90%;
+        max-width: 300px;
+    }
+
+    .repeat-button {
+        width: 100%;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+
+    .music-controls {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+
+    .control-button {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+}
