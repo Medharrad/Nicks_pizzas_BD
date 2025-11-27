@@ -160,6 +160,83 @@ canvas {
     border-radius: 10px;
 }
 
+/* Encouragement message */
+.encouragement-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+    padding: 1.5rem 2.5rem;
+    border-radius: 15px;
+    z-index: 150;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(255, 107, 107, 0.5);
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.encouragement-message.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.8);
+}
+
+.encouragement-message:not(.hidden) {
+    animation: pulse-encourage 0.8s ease-in-out infinite;
+}
+
+.encouragement-message p {
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin: 0;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse-encourage {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* 3D Rotation instruction */
+.rotation-instruction {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    z-index: 50;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: fadeInUp 1s ease 2s forwards;
+    opacity: 0;
+}
+
+.rotation-instruction p {
+    color: #fff;
+    font-size: 1rem;
+    margin: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
 /* Celebration message */
 .celebration-message {
     position: fixed;
@@ -229,6 +306,64 @@ canvas {
 }
 
 .blow-button:active {
+    transform: scale(0.95);
+}
+
+/* Auto fallback button (appears after 20s) */
+.auto-blow-button-container {
+    position: fixed;
+    bottom: 3rem;
+    right: 2rem;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    text-align: center;
+}
+
+.auto-blow-button-container:not(.hidden) {
+    opacity: 1;
+    pointer-events: all;
+    animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.help-text {
+    color: #fff;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.auto-blow-button {
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px 25px rgba(255, 107, 157, 0.4);
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.auto-blow-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 35px rgba(255, 107, 157, 0.6);
+}
+
+.auto-blow-button:active {
     transform: scale(0.95);
 }
 
@@ -328,6 +463,24 @@ canvas {
         font-size: 0.9rem;
     }
 
+    .encouragement-message {
+        padding: 1.2rem 2rem;
+        max-width: 90%;
+    }
+
+    .encouragement-message p {
+        font-size: 1.1rem;
+    }
+
+    .rotation-instruction {
+        bottom: 1rem;
+        padding: 0.8rem 1rem;
+    }
+
+    .rotation-instruction p {
+        font-size: 0.85rem;
+    }
+
     .blow-button-container {
         bottom: 2rem;
         width: 90%;
@@ -338,6 +491,24 @@ canvas {
         width: 100%;
         padding: 1.2rem 2rem;
         font-size: 1.2rem;
+    }
+
+    .auto-blow-button-container {
+        bottom: 6rem;
+        right: 50%;
+        transform: translateX(50%);
+        width: 90%;
+        max-width: 300px;
+    }
+
+    .auto-blow-button {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .help-text {
+        font-size: 0.8rem;
     }
 
     .repeat-button-container {

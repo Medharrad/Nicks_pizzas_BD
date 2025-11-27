@@ -5,6 +5,7 @@ import { Cake } from './cake.js';
 import { Candles } from './candles.js';
 import { Audio } from './audio.js';
 import { Celebration } from './celebration.js';
+import { Room } from './room.js';
 
 class BirthdayCakeApp {
     constructor() {
@@ -17,6 +18,9 @@ class BirthdayCakeApp {
         this.audio = null;
         this.celebration = null;
         this.story = null;
+        this.room = null;
+        this.candleBlowingStartTime = null;
+        this.autoButtonTimer = null;
         
         this.init();
     }
@@ -60,6 +64,7 @@ class BirthdayCakeApp {
         this.setupLights();
 
         // Initialize components
+        this.room = new Room(this.scene);
         this.cake = new Cake(this.scene);
         this.candles = new Candles(this.scene, this.cake.position);
         this.audio = new Audio();
@@ -108,12 +113,17 @@ class BirthdayCakeApp {
     onStoryComplete() {
         // Story finished, show microphone permission
         this.audio.requestMicrophonePermission((hasPermission) => {
+            // Start timer for auto fallback button
+            this.candleBlowingStartTime = Date.now();
+            this.startAutoButtonTimer();
+            
             if (hasPermission) {
                 // Show blow instruction
                 document.getElementById('blow-instruction').classList.remove('hidden');
                 
                 // Start monitoring microphone
                 this.audio.onBlow(() => this.handleBlow());
+                this.audio.onEncourage(() => this.showEncouragement());
             } else {
                 // Show blow button as fallback
                 document.getElementById('blow-button-container').classList.remove('hidden');
@@ -121,6 +131,11 @@ class BirthdayCakeApp {
             
             // Setup blow button click handler
             document.getElementById('blow-button').addEventListener('click', () => {
+                this.handleBlow();
+            });
+            
+            // Setup auto blow button click handler
+            document.getElementById('auto-blow-button').addEventListener('click', () => {
                 this.handleBlow();
             });
             
@@ -140,14 +155,34 @@ class BirthdayCakeApp {
         });
     }
 
+    showEncouragement() {
+        const encourageMsg = document.getElementById('encouragement-message');
+        encourageMsg.classList.remove('hidden');
+        
+        // Hide after 2 seconds
+        setTimeout(() => {
+            encourageMsg.classList.add('hidden');
+        }, 2000);
+    }
+
     handleBlow() {
+        // Hide encouragement message if showing
+        document.getElementById('encouragement-message').classList.add('hidden');
+        
         // Extinguish one candle
         const allOut = this.candles.extinguishNext();
         
         if (allOut) {
+            // Clear auto button timer
+            if (this.autoButtonTimer) {
+                clearTimeout(this.autoButtonTimer);
+                this.autoButtonTimer = null;
+            }
+            
             // All candles are out - trigger celebration!
             document.getElementById('blow-instruction').classList.add('hidden');
             document.getElementById('blow-button-container').classList.add('hidden');
+            document.getElementById('auto-blow-button-container').classList.add('hidden');
             this.celebration.start();
             
             // Show celebration message
@@ -176,6 +211,7 @@ class BirthdayCakeApp {
 
         // Update components
         const delta = 0.016; // Approximate 60fps
+        this.room.update(delta);
         this.candles.update(delta);
         this.celebration.update(delta);
         
@@ -190,6 +226,16 @@ class BirthdayCakeApp {
 
         // Render scene
         this.renderer.render(this.scene, this.camera);
+    }
+
+    startAutoButtonTimer() {
+        // Show auto fallback button after 20 seconds if candles are still lit
+        this.autoButtonTimer = setTimeout(() => {
+            const anyLit = this.candles.candles.some(c => c.isLit);
+            if (anyLit) {
+                document.getElementById('auto-blow-button-container').classList.remove('hidden');
+            }
+        }, 20000); // 20 seconds
     }
 
     onWindowResize() {

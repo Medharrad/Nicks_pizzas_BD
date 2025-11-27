@@ -5,10 +5,14 @@ export class Audio {
         this.microphone = null;
         this.dataArray = null;
         this.isMonitoring = false;
-        this.blowThreshold = 0.4; // Medium sensitivity
+        this.blowThreshold = 0.08; // Very high sensitivity - very easy to blow
+        this.encourageThreshold = 0.04; // Show encouragement at lower volume
         this.blowCallback = null;
+        this.encourageCallback = null;
         this.lastBlowTime = 0;
-        this.blowCooldown = 1000; // 1 second between blows
+        this.lastEncourageTime = 0;
+        this.blowCooldown = 1500; // 1.5 seconds between blows - prevents multiple triggers
+        this.encourageCooldown = 3000; // 3 seconds between encouragements
         this.musicElement = null;
     }
 
@@ -73,6 +77,13 @@ export class Audio {
             if (this.blowCallback) {
                 this.blowCallback();
             }
+        } else if (average > this.encourageThreshold && average <= this.blowThreshold && 
+                   now - this.lastEncourageTime > this.encourageCooldown) {
+            // User is trying but not blowing hard enough
+            this.lastEncourageTime = now;
+            if (this.encourageCallback) {
+                this.encourageCallback();
+            }
         }
         
         requestAnimationFrame(() => this.monitorVolume());
@@ -91,6 +102,10 @@ export class Audio {
 
     onBlow(callback) {
         this.blowCallback = callback;
+    }
+
+    onEncourage(callback) {
+        this.encourageCallback = callback;
     }
 
     playMusic() {
